@@ -1,0 +1,26 @@
+*{
+  box-sizing: border-box;
+}
+
+#sensor-container{
+  width: 27em;
+  height: 18em;
+}
+
+#sensor-grid{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: initial;
+  border: 1px solid black;
+}
+
+.sensor-cell{
+  width: 3em;
+  height: 3em;
+  border: 1px solid black;
+}
+
+.sensor-on{
+  background-color: salmon;
+}
