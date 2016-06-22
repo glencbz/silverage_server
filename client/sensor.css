@@ -1,0 +1,67 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  font-family: Helvetica-Neue, Helvetica, Arial, sans-serif;
+}
+
+#sensor-container{
+  width: 27em;
+  height: 18em;
+  margin: 0 auto 1em auto;
+}
+
+#sensor-grid{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: initial;
+  border: 1px solid #444;
+  transform: perspective(400px) rotateX(40deg);
+}
+
+.sensor-cell{
+  width: 3em;
+  height: 3em;
+  border: 1px solid #444;
+}
+
+.sensor-on{
+  background-color: salmon;
+}
+
+#pic-btn{
+  height: 5rem;
+  width: 11rem;
+  background-color: steelblue;
+  box-shadow: 0 0.5rem 0rem #316b9c;
+  border-radius: 1.1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.3em;
+  font-weight: 600;
+  margin: 0 auto;
+  cursor: pointer;
+  transform: perspective(400px) rotateX(30deg);
+}
+
+#pic-btn.clicked{
+  position: relative;
+  top: 0.5rem;
+  box-shadow: none;
+}
+
+#shown-pic{
+  width: 0;
+  height: 0;
+}
+
+#shown-pic.active{
+  width: 20em;
+  height: 15em;
+  margin: 0 auto 1em auto;
+  background-size: cover;
+}
