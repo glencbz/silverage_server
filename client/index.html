@@ -6,6 +6,7 @@
 	<body>
 		<main>
 			<section id="sensor-container">
+				<h2>Sensor Grid</h2>
 				<div id="sensor-grid">
 					<div class="sensor-cell"></div>
 					<div class="sensor-cell"></div>
@@ -63,9 +64,14 @@
 					<div class="sensor-cell"></div>
 				</div>
 			</section>
+			<section id="pic-btn-container">
+				<h2 id="result-label"></h2>
+				<div id="shown-pic"></div>
+				<div id="pic-btn">Pic!</div>
+			</section>
 		</main>
-		<script src="node_modules/jquery/dist/jquery.min.js"></script>
-		<script src="node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>	
+		<script src="jquery/jquery.min.js"></script>
+		<script src="socket.io/socket.io.js"></script>	
 		<script src="client/sensor.js"></script>
 	</body>
 </html>
