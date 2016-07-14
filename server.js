@@ -7,15 +7,16 @@ const http = require('http'),
       picName = 'client/tmp.jpg';
 
 var app = express();
-var routes = require("./routes.js")(app);
+var routes = require("./server/routes.js")(app);
 var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use('/client', express.static('client'));
+app.use('/', express.static('dist'));
 
 function spawnArd(){
-  var ard = spawn('python', ['-u', '/home/pi/Documents/Silverage/readserial.py']);
+  // var ard = spawn('python', ['-u', '/home/pi/Documents/Silverage/readserial.py']);
+  var ard = spawn('python', ['-u', 'dummy_arduino.py']);
   ard.stdout.setEncoding('utf8');
 
   var rl = readline.createInterface({
@@ -41,7 +42,7 @@ function spawnArd(){
 spawnArd();
 
 io.on('connection', (socket) => {
-  var sendFile = require('./send_img.js')(socket);
+  var sendFile = require('./server/send_img.js')(socket);
   socket.on('takepic', (timeStamp)=>{
     var picTaker = spawn('raspistill', ['-o', picName]);
     console.log('pic taking');

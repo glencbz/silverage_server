@@ -15,8 +15,8 @@ body{
   margin-bottom: 2em;
 }
 
-#sensor-grid{
-  width: 27em;
+.sensor-grid{
+  width: 21em;
   display: flex;
   flex-wrap: wrap;
   box-sizing: initial;
@@ -80,4 +80,7 @@ h2{
   text-align: center;
   color: steelblue;
 }
->>>>>>> 27806c1661cf45b913d0ea0711ab4ecf354e1baa
+
+.hidden{
+  display: none;
+}

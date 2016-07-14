@@ -28,18 +28,27 @@ def combine_reading(reading, item, offset):
     return reading
 
 def print_readings(timeout):
-    item1 = item_reading(10,2,2)
-    reading = full_reading(10,10)
+    items = [item_reading(10,2,2), item_reading(100,2,2)]
+    times = [5, 15]
 
+    invert_items = [[[-val for val in row] for row in i] for i in items]
+    time_outs = [t + 15 for t in times]
+    offsets = [(2,2), (0,0)]
+
+    reading = full_reading(WIDTH,HEIGHT)
     count = 0
-    item_time = 5
+
     while True:
         count += 1
         print reading
-        if count == item_time:
-            reading = combine_reading(reading, item1, (2,2))
+        if count in times:
+            ind = times.index(count)
+            reading = combine_reading(reading, items[ind], offsets[ind])
+        if count in time_outs:
+            ind = time_outs.index(count)
+            reading = combine_reading(reading, invert_items[ind], offsets[ind])
 
         sys.stdout.flush()
         sleep(timeout)
 
-print_readings(2)
+print_readings(.5)

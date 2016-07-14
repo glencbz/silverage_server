@@ -14,38 +14,34 @@ avg = (avg + newVal) * (n)/(n-1)
 
 import _ from 'lodash';
 
-const sensorDims = [5, 7];
+const sensorDims = [7, 5];
 
 class SensorReading{
   static createNewReading(){
-    return new SensorReading(SensorReading.createNewReadingArray());
-  }
-
-  static createNewReadingArray(){
     return _.chunk(_.times(sensorDims[0] * sensorDims[1], _.constant(0)), sensorDims[1]);
   }
+
   constructor(readings){
     if (!readings)
-      this.readings = SensorReading.createNewReadingArray();
+      this.readings = this.createNewReading();
     else
       this.readings = readings;
-    this.weight = this.sumOverSelf();
   }  
 
   averageNewReading(newReading, timeStep){
-    var denom = 1 / (timeStep + 1);
-    var newAvg = SensorReading.createNewReadingArray();
+    var avgScale = timeStep / (timeStep + 1);
+    var newAvg = this.createNewReading();
     for (var i = 0; i < sensorDims[0]; i ++)
       for (var j = 0; j < sensorDims[1]; j++)
-        newAvg[i][j] = denom * (newReading.readings[i][j] + timeStep * this.readings[i][j]);
+        newAvg[i][j] = avgScale * (newReading.readings[i][j] + this.readings[i][j]);
     return new SensorReading(newAvg);
   }
 
   diffReading(otherReading){
-    var diff = SensorReading.createNewReadingArray();
+    var diff = this.createNewReading();
     for (var i = 0; i < sensorDims[0]; i ++)
       for (var j = 0; j < sensorDims[1]; j++)
-        diff[i][j] = this.readings[i][j] - otherReading.readings[i][j];
+        diff[i][j] = this.readings[i][j] - newReading.readings[i][j];
     return new SensorReading(diff);
   }
 
@@ -59,7 +55,7 @@ class SensorReading{
 
     for (var i = 0; i < sensorDims[0]; i ++)
       for (var j = 0; j < sensorDims[1]; j++)
-        sum += Math.abs(op(otherReading.readings[i][j], this.readings[i][j]));
+        sum += Math.abs(op(newReading.readings[i][j], this.readings[i][j]));
     return sum;
   }
 
@@ -76,18 +72,18 @@ class TestCycle{
   constructor(initialReading){
     this.testingAvg = initialReading,
     this.testingCount = 1,
-    this.numTestCycles = 5;
+    this.numTestCycles = 10;
   }
 
-  test(newReading){
+  objectTestCycle(){
     // if we are not done testing for an object
     if (this.testingCount < this.numTestCycles){
-      this.testingAvg = this.testingAvg.averageNewReading(newReading, this.testingCount);
+      this.testingAvg = this.testingAvg(newReading, this.testingCount);
       this.testingCount += 1;
       return undefined;
     }
     else
-      return this.testingAvg;
+      return new SensorReading(testingAvg);
   }
 }
 
@@ -104,9 +100,9 @@ class ObjectLogger {
   updateValues(newReading){
     // if not currently testing for a new object
     if (!this.testCycle){
-      var newAvg = this.avgReading.averageNewReading(newReading, this.readingCount);
+      var newAvg = avgReading.averageNewReading(newReading, this.readingCount);
       // if the difference in readings is less than the threshold for a new object
-      if (this.avgReading.reduceDiffReadings(newAvg, true) < this.newObjectThreshold){
+      if (avgReading.reduceDiffReadings(newAvg, true) < newObjectThreshold){
         this.readingCount += 1;
         this.avgReading = newAvg;
       }
@@ -116,7 +112,7 @@ class ObjectLogger {
     }
     else{
       var testResult = this.testCycle.test(newReading);
-      this.updateObjects(testResult);
+      updateObjects(testResult);
     }
   }
   
@@ -124,26 +120,18 @@ class ObjectLogger {
     if (!testResult)
       return undefined;
 
-    var testMagnitude = testResult.diffReading(this.avgReading).weight();
-
-    this.testCycle = undefined;
     this.readingCount = 1;
     this.avgReading = testResult;
 
-    if (testMagnitude > this.newObjectThreshold){
+    var testMagnitude = testResult.sumOverSelf();
+    if (testMagnitude > newObjectThreshold)
       this.objects.add(testResult);
-      console.log("new object!", testResult);
-    }
-    else if (testMagnitude < -this.newObjectThreshold){
+    else if (testMagnitude < -newObjectThreshold){
       var closestObject = _.minBy(Array.from(this.objects), x => x.reduceDiffReadings(testResult, false));
       this.objects.delete(closestObject);
-      console.log("object removed!", closestObject);
     }
-    console.log(this.objects);
   }
 }
-
-export{SensorReading,ObjectLogger};
 
 /*// returns a log of how many cycles a cell has been logged while ignoring current objects
 function flatIndex(array, i, j){

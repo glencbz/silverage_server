@@ -1,32 +1,14 @@
 <html>
 	<head>
 		<title>SENSORS YO</title>
-		<link rel="stylesheet" href="client/sensor.css">
+		<link rel="stylesheet" href="sensor.css">
+		<link rel="stylesheet" href="loader.css">
 	</head>
 	<body>
 		<main>
 			<section id="sensor-container">
 				<h2>Sensor Grid</h2>
-				<div id="sensor-grid">
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
-					<div class="sensor-cell"></div>
+				<div class="sensor-grid">
 					<div class="sensor-cell"></div>
 					<div class="sensor-cell"></div>
 					<div class="sensor-cell"></div>
@@ -65,13 +47,14 @@
 				</div>
 			</section>
 			<section id="pic-btn-container">
-				<h2 id="result-label"></h2>
+				<h2 id="result-label">Image Recognition</h2>
 				<div id="shown-pic"></div>
 				<div id="pic-btn">Pic!</div>
+				<div class="loader hidden">Loading...</div>
 			</section>
 		</main>
 		<script src="jquery/jquery.min.js"></script>
 		<script src="socket.io/socket.io.js"></script>	
-		<script src="client/sensor.js"></script>
+		<script src="app.min.js"></script>
 	</body>
 </html>

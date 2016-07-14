@@ -1,14 +1,4 @@
-// returns a log of how many cycles a cell has been logged while ignoring current objects 
-var sensorObjects = [];
-var sensorLog = [[0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0],
-                [0,0,0,0,0,0,0,0,0]]
-
-var objectThreshold = 10;
-
+import {SensorReading, ObjectLogger} from '../itemTracker';
 
 function flatIndex(array, i, j){
   return i * array[i].length + j;
@@ -17,39 +7,6 @@ function flatIndex(array, i, j){
 function detectObjects(sensorArray){
   var newLog = trackObjects(sensorArray);
   addObject();
-}
-
-// returns a log of how many cycles a cell has been logged while ignoring current objects
-function trackObjects(sensorArray){
-  for(var i = 0; i < sensorLog.length; i++){
-    console.log(i, sensorArray[i]);
-    for(var j = 0; j < sensorLog[i].length; j++){
-      if(sensorArray[i][j])
-        sensorLog[i][j] += 1;
-      else
-        sensorLog[i][j] = 0;
-    }
-  }
-  for(var i = 0; i < sensorObjects.length; i++){
-    for (var i = 0; j < sensorObjects[i].indices.length; j++){
-      console.log(sensorObjects[i]);
-      var index = sensorObjects[i].indices[j];
-      sensorLog[index[0]][index[1]] = 0;
-    }
-  }
-}
-
-function addObject(){
-  var newObject = {indices: []};
-   for(var i = 0; i < sensorLog.length; i++){
-    for(var j = 0; j < sensorLog[i].length; j++){
-      if (sensorLog[i][j] >= objectThreshold)
-        newObject.indices.push([i,j]);
-    }
-  }
-
-  if (newObject.indices != false)
-    sensorObjects.push(newObject);
 }
 
 function colorObjects($sensorCells){
@@ -73,8 +30,15 @@ function colorCell(arrayChoices, $sensorCells){
   }
 }
 
+
 var socket = io.connect(window.location.href);
 var lastRequest = undefined;
+
+var objectLog = new ObjectLogger();
+
+function newArdData(data){
+  objectLog.updateValues(new SensorReading(data));
+}
 
 $(function(){
   var $sensorCells = $('.sensor-cell');
@@ -82,14 +46,15 @@ $(function(){
   var $shownPic = $('#shown-pic');
   var $resultLabel = $('#result-label');
 
+// arduino parsing function
   socket.on('ard', function (data) {
     var dataArray = JSON.parse(data);
+    newArdData(dataArray);
     colorCell(dataArray, $sensorCells);
-//    if (dataArray != '')
-//      detectObjects(dataArray);
-//    colorObjects($sensorCells);
   });
 
+
+// button click animation
   $picBtn.click(function(){
     $picBtn.addClass('clicked');
     $resultLabel.html('');
@@ -100,10 +65,12 @@ $(function(){
     }, 100);
   });
 
+// show picture after taking
   socket.on('showpic', function(fileName){
     $shownPic.css('background-image', 'url(' + fileName +'?' + new Date().getTime() + ')').addClass('active');
   });
 
+// recognition result
   socket.on('reg_result', function(result){
     if (lastRequest != result.timeStamp){
       console.log(result.timeStamp, lastRequest);
