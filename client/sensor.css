@@ -4,21 +4,26 @@
 
 body{
   font-family: Helvetica-Neue, Helvetica, Arial, sans-serif;
+  background-color: #f3e3c6;
 }
 
 #sensor-container{
-  width: 27em;
-  height: 18em;
-  margin: 0 auto 1em auto;
+  width: 35em;
+  height: 23em;
+  float: left;
+  margin-left: 12em;
+  margin-bottom: 2em;
 }
 
 #sensor-grid{
-  width: 100%;
+  width: 27em;
   display: flex;
   flex-wrap: wrap;
   box-sizing: initial;
   border: 1px solid #444;
   transform: perspective(400px) rotateX(40deg);
+  margin: 0 auto;
+  background-color: white
 }
 
 .sensor-cell{
@@ -29,6 +34,11 @@ body{
 
 .sensor-on{
   background-color: salmon;
+}
+
+#pic-btn-container{
+  float: left;
+  margin-left: 12em;
 }
 
 #pic-btn{
@@ -60,8 +70,14 @@ body{
 }
 
 #shown-pic.active{
-  width: 4em;
-  height: 3em;
+  width: 20em;
+  height: 15em;
   margin: 0 auto 1em auto;
   background-size: cover;
 }
+
+h2{
+  text-align: center;
+  color: steelblue;
+}
+>>>>>>> 27806c1661cf45b913d0ea0711ab4ecf354e1baa
