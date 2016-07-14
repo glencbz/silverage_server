@@ -3,8 +3,11 @@ module.exports = (app)=>{
     res.sendFile(__dirname + '/client/index.html');
   });
 
-  app.get('/*', (req,res) =>{
-    console.log(decodeURI(req.url));
-    res.sendFile(__dirname + decodeURI(req.url));
+  app.get('/jquery/jquery.min.js', (req,res) =>{;
+    res.sendFile(__dirname + '/node_modules/jquery/dist/jquery.min.js');
+  });
+
+  app.get('/socket.io/socket.io.js', (req,res) =>{;
+    res.sendFile(__dirname + '/node_modules/socket.io/node_modules/socket.io-client/socket.io.js');
   });
 }

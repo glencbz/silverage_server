@@ -2,32 +2,43 @@ const http = require('http'),
       express = require('express'),
       bodyParser = require('body-parser'),
       spawn = require('child_process').spawn,
-      readline = require('readline');
+      readline = require('readline'),
+      request = require('request'),
+      picName = 'client/tmp.jpg';
 
 var app = express();
 var routes = require("./routes.js")(app);
-var server = http.createServer(app)
+var server = http.createServer(app);
 var io = require('socket.io')(server);
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use('/client', express.static('client'));
 
-// var dumArd = spawn('python', ['dummy_arduino.py']);
-// dumArd.stdout.setEncoding('utf8');
+// dummy arduino testing
+var dumArd = spawn('python', ['dummy_arduino.py']);
+dumArd.stdout.setEncoding('utf8');
 
-// var rl = readline.createInterface({
-//   input: dumArd.stdout
-// });
-
-rl.on('line', (data)=>{
-  var t = new Date().getTime();
-  io.emit('ard', JSON.stringify({
-    data: data,
-    time: t
-  }));
+var rl = readline.createInterface({
+  input: dumArd.stdout
 });
 
-io.on('connection', (socket) =>{
-  socket.emit('news', {hello: 'world'});
+// video stream testing
+var vidStream = spawn('raspivid', ['-t 30000 -o -', '| nc -l', 3333]);
+vidStream.on('error', ()=>{
+  console.log('euuhhhh');
+});
+
+rl.on('line', (data)=>{
+  io.emit('ard', data);
+});
+
+io.on('connection', (socket) => {
+  socket.on('takepic', ()=>{
+    var picTaker = spawn('imagesnap', [picName]);
+    picTaker.on('close', ()=>{
+      socket.emit('showpic', picName);
+    });
+  })
 });
 
 server.listen(5000);
