@@ -20,7 +20,7 @@ body{
   display: flex;
   flex-wrap: wrap;
   box-sizing: initial;
-  border: 1px solid #444;
+  border: 1px solid rgb(0,200,0);
   transform: perspective(400px) rotateX(40deg);
   margin: 0 auto;
   background-color: white
@@ -29,7 +29,7 @@ body{
 .sensor-cell{
   width: 3em;
   height: 3em;
-  border: 1px solid #444;
+  border: 1px solid rgb(0,200,0);
 }
 
 .sensor-on{

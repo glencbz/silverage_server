@@ -14,7 +14,7 @@ var io = require('socket.io')(server);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static('dist'));
 
-function spawnArd(){
+function spawnArd(socket){
   // var ard = spawn('python', ['-u', '/home/pi/Documents/Silverage/readserial.py']);
   var ard = spawn('python', ['-u', 'dummy_arduino.py']);
   ard.stdout.setEncoding('utf8');
@@ -35,13 +35,16 @@ function spawnArd(){
 
   ard.on('close', ()=>{
     rl = undefined;
-    spawnArd();
+    spawnArd(socket);
+  });
+
+  socket.on('disconnect', () =>{
+    ard.kill();
   });
 }
 
-spawnArd();
-
 io.on('connection', (socket) => {
+  spawnArd(socket);
   var sendFile = require('./server/send_img.js')(socket);
   socket.on('takepic', (timeStamp)=>{
     var picTaker = spawn('raspistill', ['-o', picName]);

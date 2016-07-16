@@ -32,7 +32,7 @@ def print_readings(timeout):
     times = [5, 15]
 
     invert_items = [[[-val for val in row] for row in i] for i in items]
-    time_outs = [t + 15 for t in times]
+    time_outs = [t + 20 for t in times]
     offsets = [(2,2), (0,0)]
 
     reading = full_reading(WIDTH,HEIGHT)
@@ -41,10 +41,10 @@ def print_readings(timeout):
     while True:
         count += 1
         print reading
-        if count in times:
+        if count % 50 in times:
             ind = times.index(count)
             reading = combine_reading(reading, items[ind], offsets[ind])
-        if count in time_outs:
+        if count % 50 in time_outs:
             ind = time_outs.index(count)
             reading = combine_reading(reading, invert_items[ind], offsets[ind])
 

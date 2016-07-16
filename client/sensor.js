@@ -1,4 +1,7 @@
-import {SensorReading, ObjectLogger} from '../itemTracker';
+import {SensorReading, ObjectLogger} from './itemTracker';
+import SensorGrid from './itemRenderer';
+import ReactDOM from 'react-dom';
+import React from 'react';
 
 function flatIndex(array, i, j){
   return i * array[i].length + j;
@@ -36,12 +39,18 @@ var lastRequest = undefined;
 
 var objectLog = new ObjectLogger();
 
+var grid = ReactDOM.render(<SensorGrid height={5} 
+                            width={7}
+                            objects={Array.from(objectLog.objects)}/>, 
+                            document.getElementById('sensor-grid'));
+
 function newArdData(data){
-  objectLog.updateValues(new SensorReading(data));
+  objectLog.updateValues(new SensorReading(data), grid.updateReading.bind(grid));
+  // grid.updateReading(new SensorReading(data));
 }
 
 $(function(){
-  var $sensorCells = $('.sensor-cell');
+  // var $sensorCells = $('.sensor-cell');
   var $picBtn = $('#pic-btn');
   var $shownPic = $('#shown-pic');
   var $resultLabel = $('#result-label');
@@ -50,7 +59,7 @@ $(function(){
   socket.on('ard', function (data) {
     var dataArray = JSON.parse(data);
     newArdData(dataArray);
-    colorCell(dataArray, $sensorCells);
+    // colorCell(dataArray, $sensorCells);
   });
 
 
