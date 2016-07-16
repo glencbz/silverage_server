@@ -20,10 +20,9 @@ class SensorCell extends React.Component {
     this.getReadingColor = this.getReadingColor.bind(this);
   }
 
-  getComponentColor(objectIndex){
-    var object = this.props.objects[objectIndex];
-    var proportion = object.readings[this.props.indices[0]][this.props.indices[1]] / object.max;
-    return colors[objectIndex].map(d=>d * proportion);
+  getComponentColor(object){
+    var proportion = object.reading.readings[this.props.indices[0]][this.props.indices[1]] / object.reading.max;
+    return colors[object.index].map(d=>d * proportion);
   }
 
   getReadingColor(){
@@ -34,7 +33,7 @@ class SensorCell extends React.Component {
   }
 
   render() {
-    var componentColors = this.props.objects.map((_, i) => this.getComponentColor(i));
+    var componentColors = this.props.objects.map(d => this.getComponentColor(d));
     componentColors = _.filter(componentColors, (d)=> !_.isEqual(d,[0,0,0]));
     if (componentColors.length > 0)
       var backgroundColor = _.reduce(componentColors, sumPairwise).map(d => d / componentColors.length);

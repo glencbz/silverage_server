@@ -22,10 +22,11 @@ def noise_reading(reading):
 
 def combine_reading(reading, item, offset):
     o_i, o_j = offset
+    newReading = [r[:] for r in reading]
     for i in xrange(len(item)):
         for j in xrange(len(item[i])):
-            reading[o_i + i][o_j + j] += item[i][j]
-    return reading
+            newReading[o_i + i][o_j + j] += item[i][j]
+    return newReading
 
 def print_readings(timeout):
     items = [item_reading(10,2,2), item_reading(100,2,2)]

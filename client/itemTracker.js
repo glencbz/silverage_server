@@ -13,6 +13,7 @@ avg = (avg + newVal) * (n)/(n-1)
 */
 
 import _ from 'lodash';
+import Heap from 'heap';
 
 const sensorDims = [5, 7];
 
@@ -27,6 +28,19 @@ function indOfMin(array){
     }
 
   return indMin;
+}
+
+function heapRange(max){
+  var h = new Heap()
+  _.forEach(_.range(max), d => h.push(d))
+  return h;
+}
+
+class LogObject{
+  constructor(reading, index){
+    this.reading = reading,
+    this.index = index;
+  }
 }
 
 class SensorReading{
@@ -109,13 +123,14 @@ class TestCycle{
 }
 
 class ObjectLogger {
-  constructor(){
+  constructor(maxObjects){
     this.newObjectThreshold = 20,
     this.similarObjectThreshold = 20,
     this.readingCount = 0,
     this.avgReading = SensorReading.createNewReading(),
     this.testCycle = undefined,
-    this.objects = new Set();
+    this.objects = new Set(),
+    this.availableIndices = heapRange(maxObjects);
   }
 
   updateValues(newReading, callback){
@@ -153,18 +168,18 @@ class ObjectLogger {
     this.avgReading = testResult;
 
     if (diffMagnitude > this.newObjectThreshold){
-      this.objects.add(diffResult);
+      this.objects.add(new LogObject(diffResult, this.availableIndices.pop()));
       console.log("new object!", diffResult);
     }
 
     else if (diffMagnitude < -this.similarObjectThreshold){
       var objectsArray = Array.from(this.objects);
-      var objectDiffs = objectsArray.map(x => x.reduceDiffReadings(diffResult, true));
+      var objectDiffs = objectsArray.map(x => x.reading.reduceDiffReadings(diffResult, true));
       var bestObjectInd = indOfMin(objectDiffs);
-      debugger;
       console.log("best object score", objectDiffs[bestObjectInd]);
       if (objectDiffs[bestObjectInd] <= this.newObjectThreshold){
         this.objects.delete(objectsArray[bestObjectInd]);
+        this.availableIndices.push(objectsArray[bestObjectInd].index);
         console.log("object removed!", objectsArray[bestObjectInd]);
       }
     }

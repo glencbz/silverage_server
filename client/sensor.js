@@ -1,4 +1,5 @@
 import {SensorReading, ObjectLogger} from './itemTracker';
+import colors from './colors';
 import SensorGrid from './itemRenderer';
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -37,7 +38,7 @@ function colorCell(arrayChoices, $sensorCells){
 var socket = io.connect(window.location.href);
 var lastRequest = undefined;
 
-var objectLog = new ObjectLogger();
+var objectLog = new ObjectLogger(colors.length);
 
 var grid = ReactDOM.render(<SensorGrid height={5} 
                             width={7}
