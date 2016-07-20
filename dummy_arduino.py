@@ -22,34 +22,32 @@ def noise_reading(reading):
 
 def combine_reading(reading, item, offset):
     o_i, o_j = offset
-    newReading = [r[:] for r in reading]
+    new_reading = [r[:] for r in reading]
     for i in xrange(len(item)):
         for j in xrange(len(item[i])):
-            newReading[o_i + i][o_j + j] += item[i][j]
-    return newReading
+            new_reading[o_i + i][o_j + j] += item[i][j]
+    return new_reading
 
 def print_readings(timeout):
     items = [item_reading(10,2,2), item_reading(100,2,2)]
     times = [5, 15]
 
-    invert_items = [[[-val for val in row] for row in i] for i in items]
-    time_outs = [t + 20 for t in times]
+    reading_timeout = 20
     offsets = [(2,2), (0,0)]
 
-    reading = full_reading(WIDTH,HEIGHT)
+    base_reading = full_reading(WIDTH,HEIGHT)
     count = 0
 
     while True:
+        out_reading = base_reading
         count += 1
-        print reading
-        if count % 50 in times:
-            ind = times.index(count)
-            reading = combine_reading(reading, items[ind], offsets[ind])
-        if count % 50 in time_outs:
-            ind = time_outs.index(count)
-            reading = combine_reading(reading, invert_items[ind], offsets[ind])
+        for ind in xrange(len(times)):
+            if count >= times[ind] and count <= times[ind] + reading_timeout:
+                out_reading = combine_reading(out_reading, items[ind], offsets[ind])
 
+        print out_reading
         sys.stdout.flush()
         sleep(timeout)
+        count = count % 50
 
 print_readings(.5)

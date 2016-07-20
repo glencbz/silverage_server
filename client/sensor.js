@@ -1,5 +1,6 @@
 import {SensorReading, ObjectLogger} from './itemTracker';
 import colors from './colors';
+import {updatingChart, addData} from './updatingChart';
 import SensorGrid from './itemRenderer';
 import ReactDOM from 'react-dom';
 import React from 'react';
@@ -46,7 +47,7 @@ var grid = ReactDOM.render(<SensorGrid height={5}
                             document.getElementById('sensor-grid'));
 
 function newArdData(data){
-  objectLog.updateValues(new SensorReading(data), grid.updateReading.bind(grid));
+  objectLog.updateValues(data, grid.updateReading.bind(grid));
   // grid.updateReading(new SensorReading(data));
 }
 
@@ -59,8 +60,10 @@ $(function(){
 // arduino parsing function
   socket.on('ard', function (data) {
     var dataArray = JSON.parse(data);
-    newArdData(dataArray);
-    // colorCell(dataArray, $sensorCells);
+    var newReading = new SensorReading(dataArray);
+    newArdData(newReading);
+    console.log("new chart data", newReading);
+    addData(newReading.weight);
   });
 
 

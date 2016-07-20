@@ -84,3 +84,8 @@ h2{
 .hidden{
   display: none;
 }
+
+#chart-wrapper{
+  height: 400px;
+  width: 800px;
+}

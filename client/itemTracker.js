@@ -17,6 +17,12 @@ import Heap from 'heap';
 
 const sensorDims = [5, 7];
 
+function timeQueue(){
+  return new Heap((a,b) =>{
+    a.timeStamp - b.timeStamp;
+  });
+} 
+
 function indOfMin(array){
   var min = array[0];
   var indMin = 0;
@@ -40,6 +46,7 @@ class LogObject{
   constructor(reading, index){
     this.reading = reading,
     this.index = index;
+    this.timeStamp = new Date();
   }
 }
 
@@ -129,8 +136,12 @@ class ObjectLogger {
     this.readingCount = 0,
     this.avgReading = SensorReading.createNewReading(),
     this.testCycle = undefined,
+
     this.objects = new Set(),
     this.availableIndices = heapRange(maxObjects);
+
+    this.imageQueue = timeQueue();
+    this.objImgQueue = timeQueue();
   }
 
   updateValues(newReading, callback){
@@ -154,6 +165,12 @@ class ObjectLogger {
     callback(newReading, Array.from(this.objects));
   }
   
+  // updateThresholds(){
+  //   var newThreshold = _.sum(Array.from(this.objects).map(x => x.reading.weight)) * .15;
+  //   this.newObjectThreshold = newThreshold;
+  //   this.similarObjectThreshold = newThreshold;
+  // }
+
   updateObjects(testResult){
     if (!testResult)
       return undefined;
@@ -168,23 +185,48 @@ class ObjectLogger {
     this.avgReading = testResult;
 
     if (diffMagnitude > this.newObjectThreshold){
-      this.objects.add(new LogObject(diffResult, this.availableIndices.pop()));
-      console.log("new object!", diffResult);
+      var newObject = new LogObject(diffResult, this.availableIndices.pop());
+      this.addObject(newObject)
     }
 
-    else if (diffMagnitude < -this.similarObjectThreshold){
-      var objectsArray = Array.from(this.objects);
-      var objectDiffs = objectsArray.map(x => x.reading.reduceDiffReadings(diffResult, true));
-      var bestObjectInd = indOfMin(objectDiffs);
-      console.log("best object score", objectDiffs[bestObjectInd]);
-      if (objectDiffs[bestObjectInd] <= this.newObjectThreshold){
-        this.objects.delete(objectsArray[bestObjectInd]);
-        this.availableIndices.push(objectsArray[bestObjectInd].index);
-        console.log("object removed!", objectsArray[bestObjectInd]);
-      }
-    }
+    else if (diffMagnitude < -this.similarObjectThreshold)
+      this.testDeleteObject(diffResult);
 
     console.log(this.objects);
+  }
+
+  addObject(newObject){
+    this.objects.add(newObject);
+    this.objImgQueue.push(newObject);
+    this.assignImages();
+    // console.log("new object!", diffResult);
+  }
+
+  testDeleteObject(diffResult){
+    var objectsArray = Array.from(this.objects);
+    var objectDiffs = objectsArray.map(x => x.reading.reduceDiffReadings(diffResult, true));
+    var bestObjectInd = indOfMin(objectDiffs);
+    
+    console.log("best object score", objectDiffs[bestObjectInd]);
+    
+    if (objectDiffs[bestObjectInd] <= this.newObjectThreshold)
+      this.deleteObject(objectsArray[bestObjectInd]);
+  }
+
+  deleteObject(toDelete){
+    this.objects.delete(toDelete);
+    this.availableIndices.push(toDelete.index);
+    // console.log("object removed!", objectsArray[bestObjectInd]);
+  }
+
+  updateImages(image){
+    this.imageQueue.push(image);
+    assignImages();
+  }
+
+  assignImages(){
+    while (this.objImgQueue.size() > 0 && this.imageQueue.size() > 0)
+      this.objImgQueue.pop().image = this.imageQueue.pop();
   }
 }
 

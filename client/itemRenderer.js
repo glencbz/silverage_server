@@ -29,7 +29,7 @@ class SensorCell extends React.Component {
     var reading = this.props.readings.readings[this.props.indices[0]][this.props.indices[1]];
     if (reading == 0)
       return [0,200,0];
-    return [255 - reading, 0, 0];
+    return [255 - Math.round(reading), 0, 0];
   }
 
   render() {
