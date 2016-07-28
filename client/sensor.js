@@ -4,47 +4,24 @@ import {updatingChart, addData} from './updatingChart';
 import SensorGrid from './itemRenderer';
 import ReactDOM from 'react-dom';
 import React from 'react';
+import {sensorDims} from './sensorDims';
+console.log('sensorDims', sensorDims);
 
 function flatIndex(array, i, j){
   return i * array[i].length + j;
 }
-
-function detectObjects(sensorArray){
-  var newLog = trackObjects(sensorArray);
-  addObject();
-}
-
-function colorObjects($sensorCells){
-  for (var i = 0; i < sensorObjects.length; i++){
-    for (var j = 0; j < sensorObjects[i].indices.length; j++){
-      var ind = flatIndex($sensorCells, sensorObjects[i].indices[j][0], sensorObjects[i].indices[j][1]);
-      $($sensorCells[ind]).css('background-color', 'tomato');
-    }
-  }
-}
-
-function colorCell(arrayChoices, $sensorCells){
-  for (var i = 0; i < arrayChoices.length; i++){
-    for (var j = 0; j < arrayChoices[i].length; j++){
-      var index = flatIndex(arrayChoices, i, j);
-      if (arrayChoices[i][j] == 0)
-        $($sensorCells[index]).css('background-color', 'white');
-      else
-        $($sensorCells[index]).css('background-color', 'rgb(' + (255 - arrayChoices[i][j]) + ',0,0');
-    }
-  }
-}
-
 
 var socket = io.connect(window.location.href);
 var lastRequest = undefined;
 
 var objectLog = new ObjectLogger(colors.length);
 
-var grid = ReactDOM.render(<SensorGrid height={5} 
-                            width={7}
-                            objects={Array.from(objectLog.objects)}/>, 
+var grid = ReactDOM.render(<SensorGrid height={sensorDims.height} 
+                            width={sensorDims.width}
+                            />, 
                             document.getElementById('sensor-grid'));
+
+//objects={Array.from(objectLog.objects)}
 
 function newArdData(data){
   objectLog.updateValues(data, grid.updateReading.bind(grid));
@@ -52,17 +29,23 @@ function newArdData(data){
 }
 
 $(function(){
-  // var $sensorCells = $('.sensor-cell');
   var $picBtn = $('#pic-btn');
   var $shownPic = $('#shown-pic');
   var $resultLabel = $('#result-label');
+  var readingCount = 0;
 
 // arduino parsing function
   socket.on('ard', function (data) {
+    console.log("counts", readingCount);
+    readingCount++;
     var dataArray = JSON.parse(data);
+    console.log("data", data, dataArray);
     var newReading = new SensorReading(dataArray);
+    console.log('reading', newReading);
+    if (isNaN(newReading.weight))
+        return;
     newArdData(newReading);
-    console.log("new chart data", newReading);
+    console.log("new chart data", readingCount, newReading);
     addData(newReading.weight);
   });
 
