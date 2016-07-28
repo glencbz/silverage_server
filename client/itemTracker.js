@@ -14,8 +14,9 @@ avg = (avg + newVal) * (n)/(n-1)
 
 import _ from 'lodash';
 import Heap from 'heap';
+import {sensorDims as sd} from './sensorDims';
 
-const sensorDims = [5, 7];
+const sensorDims = [sd.width, sd.height];
 
 function timeQueue(){
   return new Heap((a,b) =>{
@@ -51,6 +52,7 @@ class LogObject{
   }
 }
 
+var errorCount = 0;
 class SensorReading{
   static createNewReading(){
     return new SensorReading(SensorReading.createNewReadingArray());
@@ -103,8 +105,15 @@ class SensorReading{
     var max = 0;
     for (var i = 0; i < sensorDims[0]; i ++)
       for (var j = 0; j < sensorDims[1]; j++){
-        sum += this.readings[i][j];
-        max = this.readings[i][j] > max ? this.readings[i][j] : max;
+	try{
+        	sum += this.readings[i][j];
+        	max = this.readings[i][j] > max ? this.readings[i][j] : max;
+	}
+	catch (TypeError){
+		console.error("wtf error", this);
+		console.log("counts", errorCount);
+		errorCount++;
+	}
       }
     return [sum, max]; 
   }
@@ -187,11 +196,11 @@ class ObjectLogger {
 
     if (diffMagnitude > this.newObjectThreshold){
       var newObject = new LogObject(diffResult, this.availableIndices.pop());
-      this.addObject(newObject)
+//      this.addObject(newObject)
     }
 
     else if (diffMagnitude < -this.similarObjectThreshold)
-      this.testDeleteObject(diffResult);
+ //     this.testDeleteObject(diffResult);
 
     console.log(this.objects);
   }

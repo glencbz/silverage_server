@@ -16,7 +16,7 @@ body{
 }
 
 .sensor-grid{
-  width: 21em;
+  width: 33em;
   display: flex;
   flex-wrap: wrap;
   box-sizing: initial;

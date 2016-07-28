@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static('dist'));
 
 function spawnArd(socket){
-  // var ard = spawn('python', ['-u', '/home/pi/Documents/Silverage/readserial.py']);
-  var ard = spawn('python', ['-u', 'dummy_arduino.py']);
+   var ard = spawn('python', ['-u', 'server/readserial.py']);
+ // var ard = spawn('python', ['-u', 'dummy_arduino.py']);
   ard.stdout.setEncoding('utf8');
 
   var rl = readline.createInterface({

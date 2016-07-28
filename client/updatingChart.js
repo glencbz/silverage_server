@@ -25,7 +25,7 @@ var updatingChart = new Chart(ctx, {
       display: false
     },
     animation:{
-      duration: 200
+      duration: 0
     },
     elements:{
       line:{
