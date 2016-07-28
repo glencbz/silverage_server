@@ -4,7 +4,10 @@ const http = require('http'),
       spawn = require('child_process').spawn,
       readline = require('readline'),
       request = require('request'),
-      picName = 'client/tmp.jpg';
+      fs = require('fs'),
+      takePic = require('./server/takePic'),
+      imgReg = require('./server/imgReg.js'),
+      fileName = 'server/tmp.jpg';
 
 var app = express();
 var routes = require("./server/routes.js")(app);
@@ -24,9 +27,6 @@ function spawnArd(socket){
   });
 
   ard.stderr.setEncoding('utf8');
-  ard.stderr.on('data', (data)=>{
-    console.log(data);
-  });
 
   rl.on('line', (data)=>{
     io.emit('ard', data);
@@ -44,17 +44,27 @@ function spawnArd(socket){
 }
 
 io.on('connection', (socket) => {
+  var connTime = new Date().getTime();
+  var dirName = dirRoot + connTime;
+  fs.mkdir(dirName);
+
   spawnArd(socket);
-  var sendFile = require('./server/send_img.js')(socket);
-  socket.on('takepic', (timeStamp)=>{
-    var picTaker = spawn('raspistill', ['-o', picName]);
-    console.log('pic taking');
-    picTaker.on('close', ()=>{
-      socket.emit('showpic', picName);
-      console.log('pic taken');
-      sendFile(picName, timeStamp);
+
+  // socket.on('takepic', (timeStamp)=>{
+  //   var fileName = getFileName();
+  // });  
+
+  imgReg(fileName, (body) =>{
+   socket.emit('reg_result', {
+      result: body
     });
-  })
+  });
+
+  takePic(fileName, ()=>{
+    socket.emit('showpic', fileName);
+    imgReg(fileName);
+  });
+
 });
 
-server.listen(5000);
+server.listen(80);

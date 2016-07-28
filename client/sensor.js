@@ -81,6 +81,7 @@ $(function(){
 // show picture after taking
   socket.on('showpic', function(fileName){
     $shownPic.css('background-image', 'url(' + fileName +'?' + new Date().getTime() + ')').addClass('active');
+    objectLog.updateImages(fileName);
   });
 
 // recognition result

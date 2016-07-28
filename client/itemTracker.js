@@ -47,6 +47,7 @@ class LogObject{
     this.reading = reading,
     this.index = index;
     this.timeStamp = new Date();
+    this.image;
   }
 }
 
