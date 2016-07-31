@@ -21,12 +21,24 @@ function formatOutput(outputString){
   lines = lines.map(function(strs){
     return [strs[0].substring(0, strs[0].indexOf('(')).trim(), parseFloat(strs[1].trim())]
   });
-  console.log("lines1", lines);
   var result = {};
   for(var i = 0; i < lines.length; i++)
     result[lines[i][0]] = lines[i][1];
 
   return result;
+}
+
+function singleClassOutput(resultObj){
+  var classification = undefined;
+  for (var key in resultObj){
+    if (resultObj[key] > .7){
+      if (classification){
+        return {};
+      }
+      classification = key;
+    }
+  }
+  return {result: classification};
 }
 
 function writeToFile(filePath, file, callback){
@@ -40,7 +52,7 @@ function regImg(filePath){
   console.log(filePath);
   var rawResult = spawnSync('/home/glen/silverage/tensorflow/tensorflow/bazel-bin/tensorflow/examples/label_image/label_image', ['--graph=/home/glen/silverage/tensorflow/tensorflow/class_w10/graph.pb', '--labels=/home/glen/silverage/tensorflow/tensorflow/class_w10/labels.txt', '--output_layer=final_result', '--image=' + filePath]).stderr.toString();
   console.log('recognition done');
-  return formatOutput(rawResult);
+  return singleClassOutput(formatOutput(rawResult));
 }
 
 module.exports=function(app){
