@@ -1,0 +1,19 @@
+{
+  "name": "silverage_server",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "connect-busboy": "0.0.2",
+    "express": "~4.14.0",
+    "mongoose": "^4.5.7",
+    "nodemon": "^1.9.2",
+    "mongoose-history": "~0.4.2"
+  }
+}
