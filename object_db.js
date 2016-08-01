@@ -44,7 +44,7 @@ function objPost(app){
 
     var Item = mongoose.model('Item', itemSchema);
 
-    app.post('/upload', (req, res) => {
+    app.post('/upload/object', (req, res) => {
       var imgPath = imgName();
 
       req.pipe(req.busboy);
