@@ -26,10 +26,12 @@ function retrieveExpiry(itemType){
 //   app.post('/upload', imgPost);
 // }
 
-function objPost(app){
+
+function dbRoutes(app){
   mongoose.connect('mongodb://localhost/test');
   var db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'connection error:'));
+
+  db.on('error', console.error.bind(console, 'connection error:'));  
   db.once('open', function() {
 
     var itemSchema = new Schema({
@@ -72,7 +74,13 @@ function objPost(app){
         });
       });
     });
+
+    app.get('/objects', (req, res) =>{
+      Item.find({}, (err, items) => {
+        res.send(items);
+      });
+    });
   });
 }
 
-export {objPost};
+export {dbRoutes};
