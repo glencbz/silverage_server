@@ -48,9 +48,8 @@ class LogObject{
     return Math.pow(xy1[0] - xy2[0], 2) + Math.pow(xy1[1] - xy2[1], 2);
   }
 
-  constructor(reading, index){
+  constructor(reading){
     this.reading = reading,
-    this.index = index;
     this.timeStamp = new Date();
   }
 
@@ -174,16 +173,14 @@ class TestCycle{
 }
 
 class ObjectLogger {
-  constructor(maxObjects){
+  constructor(socket){
     this.newObjectThreshold = 20,
     this.similarObjectThreshold = 20,
     this.readingCount = 0,
     this.avgReading = SensorReading.createNewReading(),
     this.testCycle = undefined,
-
-    this.objects = new Set(),
-    this.availableIndices = heapRange(maxObjects);
-
+    this.socket = socket,
+    this.objects = new Set();
   }
 
   updateValues(newReading, callback){
@@ -227,8 +224,8 @@ class ObjectLogger {
     this.avgReading = testResult;
 
     if (diffMagnitude > this.newObjectThreshold){
-      var newObject = new LogObject(diffResult, this.availableIndices.pop());
-     this.addObject(newObject)
+      var newObject = new LogObject(diffResult);
+      this.addObject(newObject);
     }
 
     else if (diffMagnitude < -this.similarObjectThreshold){
@@ -240,7 +237,11 @@ class ObjectLogger {
 
   addObject(newObject){
     this.objects.add(newObject);
-    // console.log("new object!", diffResult);
+    socket.emit('new_obj', {
+      weight: newObject.reading.weight,
+      position: newObject.centerOfMass(),
+      spread: newObject.spread()
+    });
   }
 
   testDeleteObject(diffResult){
@@ -256,8 +257,11 @@ class ObjectLogger {
 
   deleteObject(toDelete){
     this.objects.delete(toDelete);
-    this.availableIndices.push(toDelete.index);
-    // console.log("object removed!", objectsArray[bestObjectInd]);
+    socket.emit('del_obj', {
+      weight: toDelete.reading.weight,
+      position: toDelete.centerOfMass(),
+      spread: toDelete.spread()
+    });
   }
 
 }

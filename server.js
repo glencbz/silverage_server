@@ -19,8 +19,8 @@ app.use('/', express.static('dist'));
 
 var ard;
 function spawnArd(socket){
-   // var ard = spawn('python', ['-u', 'server/readserial.py']);
   ard = spawn('python', ['-u', 'dummy_arduino.py']);
+  // var ard = spawn('python', ['-u', 'server/readserial.py']);
   ard.stdout.setEncoding('utf8');
 
   var rl = readline.createInterface({
@@ -46,27 +46,26 @@ function spawnArd(socket){
 }
 
 io.on('connection', (socket) => {
+  if (!ard)
+    spawnArd(socket);
   // var connTime = new Date().getTime();
   // var dirName = dirRoot + connTime;
   // fs.mkdir(dirName);
-  if (!ard)
-    spawnArd(socket);
 
   // socket.on('takepic', (timeStamp)=>{
   //   var fileName = getFileName();
   // });  
 
 
-/*  takePic(fileName, ()=>{
-    socket.emit('showpic', fileName);
-    // console.log('pic taken', fileName);
-    imgReg(fileName, (body) =>{
-      socket.emit('reg_result', {
-        result: body
-      });
-    });
-  });*/
-
+  // takePic(fileName, ()=>{
+  //   socket.emit('showpic', fileName);
+  //   // console.log('pic taken', fileName);
+  //   imgReg(fileName, (body) =>{
+  //     socket.emit('reg_result', {
+  //       result: body
+  //     });
+  //   });
+  // });
 });
 
 /*takePic(fileName, ()=>{
@@ -75,5 +74,12 @@ io.on('connection', (socket) => {
     console.log(body);
   });
 });*/
+
+socket.on('new_obj', (obj)=>{
+
+});
+socket.on('del_obj', (obj)=>{
+  
+});
 
 server.listen(80);

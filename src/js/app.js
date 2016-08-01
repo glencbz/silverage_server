@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import {SensorReading, ObjectLogger} from './itemTracker';
-import colors from './colors';
 import {updatingChart, addData} from './updatingChart';
 import SensorGrid from './itemRenderer';
 import {sensorDims} from './sensorDims';
@@ -19,14 +18,14 @@ function flatIndex(array, i, j){
 var socket = io.connect(window.location.href);
 var lastRequest;
 
-var objectLog = new ObjectLogger(colors.length);
+var objectLog = new ObjectLogger(socket);
 
 var grid = ReactDOM.render(<SensorGrid height={sensorDims.height} 
                             width={sensorDims.width}
                             />, 
                             document.getElementById('sensor-grid'));
 
-var objectList =  ReactDOM.render(<ObjectList/>, document.getElementById('item-list'));
+var objectList =  ReactDOM.render(<ObjectList fileName='../server/tmp.jpg'/>, document.getElementById('item-list'));
 
 function newArdData(data){
   objectLog.updateValues(data, (reading, objectArr) =>{
