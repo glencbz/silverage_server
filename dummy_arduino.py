@@ -2,8 +2,8 @@ import random
 import sys
 from time import sleep
 
-WIDTH = 7
-HEIGHT = 5
+WIDTH = 11
+HEIGHT = 7
 
 def full_reading(width, height):
     return [[0 for _ in xrange(width)] for _ in xrange(height)]
@@ -29,11 +29,11 @@ def combine_reading(reading, item, offset):
     return new_reading
 
 def print_readings(timeout):
-    items = [item_reading(10,2,2), item_reading(100,2,2)]
-    times = [5, 15]
+    items = [item_reading(100,2,3), item_reading(100,1,1)]
+    times = [5, 25]
 
-    reading_timeout = 20
-    offsets = [(2,2), (0,0)]
+    reading_timeout = 10
+    offsets = [(4,8), (5,0)]
 
     base_reading = full_reading(WIDTH,HEIGHT)
     count = 0

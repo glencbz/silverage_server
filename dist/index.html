@@ -1,27 +1,34 @@
 <html>
 	<head>
 		<title>SENSORS YO</title>
-		<link rel="stylesheet" href="sensor.css">
-		<link rel="stylesheet" href="loader.css">
 	</head>
 	<body>
-		<main>
-			<section id="sensor-container">
-				<h2>Sensor Grid</h2>
-				<div id="sensor-grid"></div>
-			</section>
-			<section id="pic-btn-container">
-				<h2 id="result-label">Image Recognition</h2>
-				<div id="shown-pic"></div>
-				<div id="pic-btn">Pic!</div>
-				<div class="loader hidden">Loading...</div>
-			</section>
-			<div id="chart-wrapper">
-				<canvas id="updating-chart" width="400" height="400"></canvas>
+		<main id='main'>
+			<div class="tile is-ancestor">
+				<div class="tile is-6 is-parent">
+					<div class="tile is-child sensor-tile bordered">
+						<div class="sensor-wrapper">
+							<h2>Sensor Grid</h2>
+							<div id="sensor-grid"></div>
+						</div>						
+					</div>
+				</div>
+				<div class="tile is-6 is-parent is-vertical right-tile">
+					<div class="tile is-child list-tile bordered">
+						<h2>Your Objects!</h2>
+						<div class="list-wrapper">
+							<div id="item-list"></div>
+						</div>	
+					</div>
+					<div class="tile is-child chart-tile bordered">
+						<div class="chart-wrapper">
+							<canvas id="updating-chart" width="400" height="400"></canvas>
+						</div>	
+					</div>
+				</div>
 			</div>
 		</main>
-		<script src="jquery/jquery.min.js"></script>
-		<script src="socket.io/socket.io.js"></script>	
 		<script src="app.min.js"></script>
+		<!-- <script src="jquery/jquery.min.js"></script> -->
 	</body>
 </html>
