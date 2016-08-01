@@ -1,0 +1,109 @@
+@import './globals/main';
+@import './globals/variables';
+
+$list-color: #fcfdff ! default;
+$btn-height: 4rem;
+$list-height: calc(100% - #{$btn-height} - #{$header-height});
+$row-height: 10rem;
+$padding-height: 1rem;
+$picHeight: $row-height - 2 * $padding-height;
+$expHeight: $picHeight - 2 * $padding-height;
+
+.itemList{
+	overflow: scroll;
+	height: $list-height;
+	background-color: $list-color;
+
+	:global .card{
+		color: $primary-text;
+		width: 100%;
+	}
+}
+
+.itemThumb{
+	height: $picHeight;
+	width: $picHeight;
+	background-size: cover;
+    background-position: center;
+    margin-right: 1em;
+    // border-radius: 1rem;
+}
+
+.expiryDate{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	background-color: tomato;
+	font-size: 1.5em;
+	text-align: center;
+	color: white;
+	height: $row-height;
+	width: $row-height;
+	position: absolute;
+	top: 0;
+	right: 0;
+
+	:global .expiry-number{
+		font-size: 3em;
+	    height: 1.3em;
+	}
+}
+
+.itemRow{
+	:global .media{
+		min-height: $row-height;
+		display: flex;
+		padding: $padding-height;
+		align-items: center;
+		margin: 0;
+	}
+
+	:global .media-left{
+		margin: 0;
+	}
+
+	:global .media-content{
+		height: $picHeight;
+	}
+}
+
+.catBtns{
+	height: $btn-height;
+	width: 100%;
+	display: flex;
+}
+
+.catBtn{
+	background-color: $primary-color;
+	color: $text-light;
+	border-right: 1px solid transparent;
+	height: 100%;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5em;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+	position: relative;
+
+	&:hover{
+		z-index: 2;
+		background-color: $dark-primary-color;
+	}
+}
+
+/* .itemList{
+	overflow: scroll;
+	height: $list-height;
+	background-color: $list-color;
+}
+
+.itemInfo{
+	margin-left: auto;
+}
+
+.midSection{
+	height: $picHeight;
+	width: 50%;
+} */

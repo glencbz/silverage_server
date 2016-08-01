@@ -1,0 +1,76 @@
+@import 'variables';
+
+// Extended classes
+.bg-dark{
+	background-color: $dark-primary-color;
+}
+
+.font-light{
+	color: $text-light;
+}
+
+.font-standard{
+	color: $primary-text;
+}
+
+// Reset styles
+ul{
+	list-style: none;
+	padding: 0;
+	margin-bottom: 0;
+}
+
+::-webkit-scrollbar { 
+    display: none; 
+}
+
+//User styles
+
+header{
+	.navbar{
+		@extend .bg-dark;
+		@extend .font-light;
+	}
+	.main-title{
+		text-align: center;
+	}
+}
+
+body{
+	@extend .font-standard;
+}
+
+/* body{
+	background-color: $body-color;
+	background: url('/static/backgrounds/bg1.png') repeat;
+	overflow: hidden;
+}
+
+main{
+	position: relative;
+	top: $header-height;
+	height: calc(100% - #{$header-height});
+}
+
+:global nav.header{
+	height: $header-height;
+	// border-bottom: 1px solid #444;
+	box-shadow: 0 0 1px black;
+	position: fixed;
+	width: 100%;
+	z-index: 1000;
+	background-color: $header-color;
+}
+
+:global .header .main-title{
+	margin: 0 auto;
+	font-size: 2.5rem;
+	text-align: center;
+	line-height: $header-height;
+	height: $header-height;
+	color: $title-color;
+}
+
+:global .items-container{
+	height: 100%;
+} */
