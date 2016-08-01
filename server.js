@@ -6,8 +6,9 @@ const http = require('http'),
       request = require('request'),
       fs = require('fs'),
       takePic = require('./server/takePic'),
-      imgReg = require('./server/imgReg.js'),
-      fileName = 'server/tmp.jpg';
+      imgReg = require('./server/imgReg'),
+      fileName = 'server/tmp.jpg',
+      postObj = require('./server/postObj');
 
 var app = express();
 var routes = require("./server/routes.js")(app);
@@ -17,6 +18,16 @@ var io = require('socket.io')(server);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static('dist'));
 
+//   io.emit('pic_taken', fileName);
+//   // console.log('pic taken', fileName);
+//   imgReg(fileName, (body) =>{
+//     socket.emit('reg_result', {
+//       result: body
+//     });
+//   });
+// });
+
+var ard;
 function spawnArd(socket){
    var ard = spawn('python', ['-u', 'server/readserial.py']);
  // var ard = spawn('python', ['-u', 'dummy_arduino.py']);
@@ -30,7 +41,7 @@ function spawnArd(socket){
 
   rl.on('line', (data)=>{
     io.emit('ard', data);
-    console.log(data);
+    // console.log(data);
   });
 
   ard.on('close', ()=>{
@@ -44,34 +55,33 @@ function spawnArd(socket){
 }
 
 io.on('connection', (socket) => {
-  var connTime = new Date().getTime();
-  var dirName = dirRoot + connTime;
-  fs.mkdir(dirName);
+  if (!ard)
+    spawnArd(socket);
 
-  spawnArd(socket);
+  socket.on('new_obj', (obj)=>{
+    console.log('going to post an object', JSON.stringify(obj));
+    postObj(fileName, obj, (res) =>{
+      console.log(res);
+    });
+  });
+
+  socket.on('del_obj', (obj)=>{
+    console.log('object to be deleted', obj);
+  });
+  // var connTime = new Date().getTime();
+  // var dirName = dirRoot + connTime;
+  // fs.mkdir(dirName);
 
   // socket.on('takepic', (timeStamp)=>{
   //   var fileName = getFileName();
   // });  
+});
 
-/*  imgReg(fileName, (body) =>{
-   socket.emit('reg_result', {
-      result: body
-    });
+/*takePic(fileName, ()=>{
+  console.log('pic taken', fileName);
+  imgReg(fileName, (body) =>{
+    console.log(body);
   });
 */
-
-  takePic(fileName, ()=>{
-    socket.emit('showpic', fileName);
-    console.log('pic taken', fileName);
-    imgReg(fileName);
-  });
-
-});
-
-takePic(fileName, ()=>{
-  console.log('pic taken', fileName);
-  imgReg(fileName, result => console.log(result));
-});
 
 server.listen(80);

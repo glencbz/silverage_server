@@ -29,11 +29,11 @@ def combine_reading(reading, item, offset):
     return new_reading
 
 def print_readings(timeout):
-    items = [item_reading(100,2,3), item_reading(100,1,1)]
+    items = [item_reading(100,2,2), item_reading(100,2,2)]
     times = [5, 25]
 
     reading_timeout = 10
-    offsets = [(4,8), (5,0)]
+    offsets = [(0,0), (0,9)]
 
     base_reading = full_reading(WIDTH,HEIGHT)
     count = 0

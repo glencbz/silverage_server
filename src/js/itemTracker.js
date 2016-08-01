@@ -76,7 +76,7 @@ class LogObject{
     var spread = 0;
     for (var i = 0; i < this.reading.readings.length; i++){
       for (var j = 0; j < this.reading.readings[i].length; j++){
-        spread += this.reading.readings[i][j] * LogObject.sqEuDist([i +.5 , j + .5], cm)
+        spread += Math.abs(this.reading.readings[i][j]) * LogObject.sqEuDist([i + 0.5, j + 0.5], cm);
       }
     }
     spread /= this.reading.weight;
@@ -237,7 +237,8 @@ class ObjectLogger {
 
   addObject(newObject){
     this.objects.add(newObject);
-    socket.emit('new_obj', {
+    console.log('new object added woo');
+    this.socket.emit('new_obj', {
       weight: newObject.reading.weight,
       position: newObject.centerOfMass(),
       spread: newObject.spread()
@@ -257,7 +258,7 @@ class ObjectLogger {
 
   deleteObject(toDelete){
     this.objects.delete(toDelete);
-    socket.emit('del_obj', {
+    this.socket.emit('del_obj', {
       weight: toDelete.reading.weight,
       position: toDelete.centerOfMass(),
       spread: toDelete.spread()
