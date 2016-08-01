@@ -4,44 +4,71 @@ const spawn = require('child_process').spawn,
     path = require('path');
 
 function initInput(){
-  return spawn('python', ['-u', 'server/zx_sensor/sensorread.py']);
+  return spawn('python', ['-u', '/home/pi/Documents/Silverage/silverage_pi/server/zx_sensor/proximityState.py']);
+}
+
+function initCamera(fileName){
+  return spawn('raspistill', ['-s', '-o', fileName, '-t', 0, '-ss', 1900]);
 }
 
 function takePic(fileName, callback){
-  fileName = path.join(process.cwd(), fileName);
-  var picTaker = spawn('raspistill', ['-s', '-o', fileName, '-t', 0]);
+//  var fileCount = 0;
+
+  fileName = path.join(process.cwd(), /*fileCount +*/ fileName);
+  var picTaker = initCamera(fileName);
+//  var picTaker = spawn('python', ['-u', 'pictureTaker.py']);
+  var light = spawn('python', ['-u', 'light.py']);
 
   var inputSource = initInput();
 
   picTaker.stderr.setEncoding('utf8');
   picTaker.stdout.setEncoding('utf8');
+  light.stderr.setEncoding('utf8');
+  light.stdout.setEncoding('utf8');
 
-  picTaker.stdout.on('data', data => console.log(data));
   picTaker.stderr.on('data', data => console.error(data));
+  light.stderr.on('data', data => console.error(data));
+  picTaker.stdout.on('data', data => console.log(data));
 
   inputSource.stdout.setEncoding('utf8');
   console.log('zx sensor input intialised');
-  console.log(fileName);
   
-  var rl = readline.createInterface({
+  var inputrl = readline.createInterface({
     input: inputSource.stdout
   });
+  
+  var lightrl = readline.createInterface({
+    input: light.stdout
+  });
 
-  rl.on('line', (data) => {
+  inputrl.on('line', (data) => {
     console.log(data);
     if (data == 'IN'){
+      light.stdin.write('ON\n');
+    }
+  });
+ 
+  lightrl.on('line', (data) => {
+    console.log(data);
+    if (data == 'ON'){
       picTaker.kill('SIGUSR1');
+//      picTaker.stdin.write(fileName + '\n');
       console.log('pic taking attempted');
     }
   });
+
   var watchedPath = path.dirname(fileName);
   var watcher = chokidar.watch(watchedPath, {persistent: true});
 
-  console.log(watchedPath);
+//  console.log(watchedPath);
   watcher.on('change', path => {
-    // console.log(fileName);
-    if (path === fileName)
+    console.log(path);
+    if (path === fileName){
+      light.stdin.write('OFF\n');
+ //     picTaker.kill();
+ //     picTaker = initCamera(fileName, ++fileCount);
       callback();
+    }
   });
 }
 

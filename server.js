@@ -17,10 +17,9 @@ var io = require('socket.io')(server);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static('dist'));
 
-var ard;
 function spawnArd(socket){
-  ard = spawn('python', ['-u', 'dummy_arduino.py']);
-  // var ard = spawn('python', ['-u', 'server/readserial.py']);
+   var ard = spawn('python', ['-u', 'server/readserial.py']);
+ // var ard = spawn('python', ['-u', 'dummy_arduino.py']);
   ard.stdout.setEncoding('utf8');
 
   var rl = readline.createInterface({
@@ -34,52 +33,45 @@ function spawnArd(socket){
     console.log(data);
   });
 
-  // ard.on('close', ()=>{
-  //   rl = undefined;
-  //   spawnArd(socket);
-  // });
+  ard.on('close', ()=>{
+    rl = undefined;
+    spawnArd(socket);
+  });
 
   socket.on('disconnect', () =>{
     ard.kill();
-    ard = undefined;
   });
 }
 
 io.on('connection', (socket) => {
-  if (!ard)
-    spawnArd(socket);
-  // var connTime = new Date().getTime();
-  // var dirName = dirRoot + connTime;
-  // fs.mkdir(dirName);
+  var connTime = new Date().getTime();
+  var dirName = dirRoot + connTime;
+  fs.mkdir(dirName);
+
+  spawnArd(socket);
 
   // socket.on('takepic', (timeStamp)=>{
   //   var fileName = getFileName();
   // });  
 
-
-  // takePic(fileName, ()=>{
-  //   socket.emit('showpic', fileName);
-  //   // console.log('pic taken', fileName);
-  //   imgReg(fileName, (body) =>{
-  //     socket.emit('reg_result', {
-  //       result: body
-  //     });
-  //   });
-  // });
-});
-
-/*takePic(fileName, ()=>{
-  console.log('pic taken', fileName);
-  imgReg(fileName, (body) =>{
-    console.log(body);
+/*  imgReg(fileName, (body) =>{
+   socket.emit('reg_result', {
+      result: body
+    });
   });
-});*/
+*/
 
-socket.on('new_obj', (obj)=>{
+  takePic(fileName, ()=>{
+    socket.emit('showpic', fileName);
+    console.log('pic taken', fileName);
+    imgReg(fileName);
+  });
 
 });
-socket.on('del_obj', (obj)=>{
-  
+
+takePic(fileName, ()=>{
+  console.log('pic taken', fileName);
+  imgReg(fileName, result => console.log(result));
 });
 
 server.listen(80);
