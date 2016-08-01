@@ -1,7 +1,7 @@
 import React from 'react';
 
 function latestUrl(fileName){
-	return 'url(' + fileName + '?' + new Date().getTime() + ')';
+	return 'url(static/' + fileName + '?' + new Date().getTime() + ')';
 }
 
 function perc(d){
