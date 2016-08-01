@@ -1,13 +1,4 @@
-var // express = require('express'),
-  fs = require('fs'),
-  spawnSync = require('child_process').spawnSync;
-
-
-var ext = '.jpg';
-
-function fileName(){
-  return __dirname + '/upload_img/' + new Date().getTime() + ext;
-}
+var spawnSync = require('child_process').spawnSync;
 
 function formatOutput(outputString){
   console.log(outputString);
@@ -29,9 +20,9 @@ function formatOutput(outputString){
 }
 
 function singleClassOutput(resultObj){
-  var classification = undefined;
+  var classification;
   for (var key in resultObj){
-    if (resultObj[key] > .7){
+    if (resultObj[key] > 0.7){
       if (classification){
         return {};
       }
@@ -39,12 +30,6 @@ function singleClassOutput(resultObj){
     }
   }
   return {result: classification};
-}
-
-function writeToFile(filePath, file, callback){
-  var fstream = fs.createWriteStream(filePath);
-  file.pipe(fstream);
-  file.on('end', callback);
 }
 
 function regImg(filePath){
@@ -55,16 +40,4 @@ function regImg(filePath){
   return singleClassOutput(formatOutput(rawResult));
 }
 
-module.exports=function(app){
-	app.post('/upload', function(req, res){
-		console.log('req received');
-		req.pipe(req.busboy);
-		req.busboy.on('file', function(fieldname, file){
-      var filePath = fileName();
-      writeToFile(filePath, file, function(){
-        var result = regImg(filePath);
-        res.send(JSON.stringify(result));
-      });
-		});
-	});
-}
+export {regImg};

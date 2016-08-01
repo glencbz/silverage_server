@@ -1,17 +1,14 @@
 var express = require('express'),
 	bodyParser = require('body-parser'),
-	fs = require('fs'),
 	busboy = require('connect-busboy'),
-	spawn = require('child_process').spawn;
+	objPost = require('./object_db').objPost;
 
 var app = express();
 
-
 app.use(busboy());
-
-img_post = require('./img_post')(app);
-
-//test mongoDB
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+objPost(app);
 
 require('./object_db.js');
 
