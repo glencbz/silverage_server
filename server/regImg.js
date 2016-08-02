@@ -40,4 +40,4 @@ function regImg(filePath){
   return singleClassOutput(formatOutput(rawResult));
 }
 
-export {regImg};
+module.exports= {regImg};

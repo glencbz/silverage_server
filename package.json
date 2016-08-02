@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "nodemon index.js"
+    "test": "nodemon index.js",
+    "dev": "env NODE_ENV=production webpack"
   },
   "author": "",
   "license": "BSD-2-Clause",
@@ -50,9 +51,5 @@
     "sass-loader": "^4.0.0",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1"
-  },
-  "scripts": {
-    "dev": "env NODE_ENV=production webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
