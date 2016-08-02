@@ -14,10 +14,10 @@ function initCamera(fileName){
 function takePic(fileName, callback){
 //  var fileCount = 0;
 
-  fileName = path.join(process.cwd(), /*fileCount +*/ fileName);
+  fileName = path.join(__dirname, "../static",  fileName);
   var picTaker = initCamera(fileName);
 //  var picTaker = spawn('python', ['-u', 'pictureTaker.py']);
-  var light = spawn('python', ['-u', 'light.py']);
+  var light = spawn('python', ['-u', path.join(__dirname, 'light.py')]);
 
   var inputSource = initInput();
 
@@ -25,10 +25,14 @@ function takePic(fileName, callback){
   picTaker.stdout.setEncoding('utf8');
   light.stderr.setEncoding('utf8');
   light.stdout.setEncoding('utf8');
+  inputSource.stderr.setEncoding('utf8');
+  inputSource.stdout.setEncoding('utf8');
 
   picTaker.stderr.on('data', data => console.error(data));
   light.stderr.on('data', data => console.error(data));
   picTaker.stdout.on('data', data => console.log(data));
+  inputSource.stderr.on('data', data => console.error(data));
+  inputSource.stdout.on('data', data => console.log(data));
 
   inputSource.stdout.setEncoding('utf8');
   console.log('zx sensor input intialised');
@@ -42,14 +46,14 @@ function takePic(fileName, callback){
   });
 
   inputrl.on('line', (data) => {
-    console.log(data);
+//    console.log(data);
     if (data == 'IN'){
       light.stdin.write('ON\n');
     }
   });
  
   lightrl.on('line', (data) => {
-    console.log(data);
+//    console.log(data);
     if (data == 'ON'){
       picTaker.kill('SIGUSR1');
 //      picTaker.stdin.write(fileName + '\n');
@@ -66,7 +70,6 @@ function takePic(fileName, callback){
     if (path === fileName){
       light.stdin.write('OFF\n');
  //     picTaker.kill();
- //     picTaker = initCamera(fileName, ++fileCount);
       callback();
     }
   });

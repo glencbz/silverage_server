@@ -7,7 +7,7 @@ const http = require('http'),
       fs = require('fs'),
       takePic = require('./server/takePic'),
       imgReg = require('./server/imgReg'),
-      fileName = 'server/tmp.jpg',
+      fileName = 'static/tmp.jpg',
       postObj = require('./server/postObj');
 
 var app = express();
@@ -17,6 +17,7 @@ var io = require('socket.io')(server);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use('/', express.static('dist'));
+app.use('/static', express.static('static'));
 
 //   io.emit('pic_taken', fileName);
 //   // console.log('pic taken', fileName);
@@ -29,8 +30,8 @@ app.use('/', express.static('dist'));
 
 var ard;
 function spawnArd(socket){
-   var ard = spawn('python', ['-u', 'server/readserial.py']);
- // var ard = spawn('python', ['-u', 'dummy_arduino.py']);
+  var ard = spawn('python', ['-u', 'server/readserial.py']);
+//  var ard = spawn('python', ['-u', 'dummy_arduino.py']);
   ard.stdout.setEncoding('utf8');
 
   var rl = readline.createInterface({
@@ -77,11 +78,8 @@ io.on('connection', (socket) => {
   // });  
 });
 
-/*takePic(fileName, ()=>{
-  console.log('pic taken', fileName);
-  imgReg(fileName, (body) =>{
-    console.log(body);
-  });
-*/
+takePic(fileName, () => {
+  console.log('taken');
+});
 
 server.listen(80);

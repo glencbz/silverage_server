@@ -2,8 +2,8 @@ import random
 import sys
 from time import sleep
 
-WIDTH = 11
-HEIGHT = 7
+WIDTH = 7
+HEIGHT = 11
 
 def full_reading(width, height):
     return [[0 for _ in xrange(width)] for _ in xrange(height)]
