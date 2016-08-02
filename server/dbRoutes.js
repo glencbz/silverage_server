@@ -1,11 +1,13 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    regImg = require('./regImg').regImg;
+    regImg = require('./regImg').regImg,
+    fs = require('fs'),
+    path = require('path');
 
 const ext = '.jpg';
 
 function imgName(){
-  return __dirname + '/upload_img/' + new Date().getTime() + ext;
+  return path.join(__dirname, '../upload_img', new Date().getTime() + ext);
 }
 
 function writeToFile(filePath, file, callback){
@@ -26,6 +28,34 @@ function retrieveExpiry(itemType){
 //   app.post('/upload', imgPost);
 // }
 
+function formDbObject(req, callback){
+  var dbValues = {
+    position: []
+  };
+
+  var imgPath = imgName();
+
+  req.pipe(req.busboy);
+  req.busboy.on('file', function(fieldname, file){
+    writeToFile(imgPath, file, function(){
+      var result = regImg(imgPath).result;
+      dbValues.type = result;
+      dbValues.expiryDate = retrieveExpiry(result);
+      dbValues.image = imgPath;
+    });
+  });
+
+  req.busboy.on('field', (fieldname, val) =>{
+    if (fieldname == 'position')
+      dbValues[fieldname].push(val);
+    else
+      dbValues[fieldname] = val;
+  })
+
+  req.busboy.on('finish', () =>{
+    callback(dbValues);
+  });
+}
 
 function dbRoutes(app){
   mongoose.connect('mongodb://localhost/test');
@@ -47,30 +77,25 @@ function dbRoutes(app){
     var Item = mongoose.model('Item', itemSchema);
 
     app.post('/upload/object', (req, res) => {
-      var imgPath = imgName();
+      formDbObject(req, (dbValues) =>{
+        var dbEntry = new Item(dbValues);
+        dbEntry.save((err, entry) => {
+          if (err)
+            console.error(err);
+          else
+            console.log(entry);
+        });
+      });
+    });
 
-      req.pipe(req.busboy);
-      req.busboy.on('file', function(fieldname, file){
-        writeToFile(imgPath, file, function(){
-          var result = regImg(imgPath).result;
-
-          // Expected parameters from client
-          var dbValues = {
-            type: result,
-            expiryDate: retrieveExpiry,
-            image: imgPath,
-            position: req.body.position,
-            weight: req.body.weight,
-            spread: req.body.spread
-          };
-
-          var dbEntry = new Item(dbValues);
-          dbEntry.save((err, entry) => {
-            if (err)
-              console.error(err);
-            else
-              console.log(entry);
-          });
+    app.post('/delete/object', (req, res) => {
+      formDbObject(req, (dbValues) =>{
+        Item.find(dbValues)
+        .remove((err, entry) => {
+           if (err)
+            console.error(err);
+          else
+            console.log(entry.result);         
         });
       });
     });
@@ -83,4 +108,4 @@ function dbRoutes(app){
   });
 }
 
-export {dbRoutes};
+module.exports={dbRoutes};
