@@ -1,16 +1,8 @@
 import React from 'react';
+import {objCol as hslFromArray} from './hslFromArray';
 
 function latestUrl(fileName){
 	return 'url(static/' + fileName + '?' + new Date().getTime() + ')';
-}
-
-function perc(d){
-   // return 100 - Math.round(d / 255 * 70)  + '%';
-   return 100 - Math.round(d / 1000 * 70)  + '%';
-}
-
-function hslFromArray(colArray){
-  return "hsla(" + [colArray[0], perc(colArray[1]), perc(colArray[2]), .7].join() + ")";
 }
 
 class ObjectList extends React.Component {
@@ -47,7 +39,7 @@ class ObjectRow extends React.Component {
 	}
 
 	render() {
-		var weightColor = hslFromArray([240, this.props.object.reading.weight, this.props.object.reading.weight]);
+		var weightColor = hslFromArray([240, this.props.object.reading.weight, this.props.object.reading.weight, .7]);
 		return (
       	<li className='card object-entry'>
       		<div className='media'>

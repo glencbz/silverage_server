@@ -39,7 +39,7 @@ function spawnArd(socket){
   });
 
   ard.stderr.setEncoding('utf8');
-
+  ard.stderr.on('data', (data)=>{console.error(data);});
   rl.on('line', (data)=>{
     io.emit('ard', data);
     // console.log(data);
