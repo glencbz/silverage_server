@@ -11,6 +11,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 //adds the object uploading route to POST /upload/object
 //adds the object accessing route to GET /object
+
 dbRoutes(app);
 app.use('/', express.static('dist'));
 
