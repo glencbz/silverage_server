@@ -16,7 +16,7 @@ import _ from 'lodash';
 import Heap from 'heap';
 import {sensorDims as sd} from './sensorDims';
 
-const sensorDims = [sd.height, sd.width];
+const sensorDims = [sd.width, sd.height];
 
 function timeQueue(){
   return new Heap((a,b) =>{
@@ -80,7 +80,7 @@ class LogObject{
       }
     }
     spread /= this.reading.weight;
-    this.sp = spread;
+    this.sp = Math.pow(spread, 0.5);
     return this.sp;
   }
 }

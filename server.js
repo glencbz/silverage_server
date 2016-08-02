@@ -39,7 +39,7 @@ function spawnArd(socket){
   });
 
   ard.stderr.setEncoding('utf8');
-
+  ard.stderr.on('data', (data)=>{console.error(data);});
   rl.on('line', (data)=>{
     io.emit('ard', data);
     // console.log(data);
@@ -61,13 +61,16 @@ io.on('connection', (socket) => {
 
   socket.on('new_obj', (obj)=>{
     console.log('going to post an object', JSON.stringify(obj));
-    postObj(fileName, obj, (res) =>{
+    postObj.add(fileName, obj, (res) =>{
       console.log(res);
     });
   });
 
   socket.on('del_obj', (obj)=>{
-    console.log('object to be deleted', obj);
+    console.log('object to be deleted', JSON.stringify(obj));
+    postObj.del(null, obj, (res) =>{
+      console.log(res);
+    });
   });
   // var connTime = new Date().getTime();
   // var dirName = dirRoot + connTime;
