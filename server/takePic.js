@@ -8,13 +8,13 @@ function initInput(){
 }
 
 function initCamera(fileName){
-  return spawn('raspistill', ['-s', '-o', fileName, '-t', 0, '-ss', 1900]);
+  return spawn('raspistill', ['-s', '-o', fileName, '-t', 0, '-ss', 50000]);
 }
 
 function takePic(fileName, callback){
 //  var fileCount = 0;
 
-  fileName = path.join(__dirname, "../static",  fileName);
+  fileName = path.join(__dirname, "..",  fileName);
   var picTaker = initCamera(fileName);
 //  var picTaker = spawn('python', ['-u', 'pictureTaker.py']);
   var light = spawn('python', ['-u', path.join(__dirname, 'light.py')]);
@@ -34,7 +34,6 @@ function takePic(fileName, callback){
   inputSource.stderr.on('data', data => console.error(data));
   inputSource.stdout.on('data', data => console.log(data));
 
-  inputSource.stdout.setEncoding('utf8');
   console.log('zx sensor input intialised');
   
   var inputrl = readline.createInterface({
@@ -53,7 +52,7 @@ function takePic(fileName, callback){
   });
  
   lightrl.on('line', (data) => {
-//    console.log(data);
+    console.log(data);
     if (data == 'ON'){
       picTaker.kill('SIGUSR1');
 //      picTaker.stdin.write(fileName + '\n');
@@ -64,7 +63,9 @@ function takePic(fileName, callback){
   var watchedPath = path.dirname(fileName);
   var watcher = chokidar.watch(watchedPath, {persistent: true});
 
-//  console.log(watchedPath);
+  console.log(watchedPath);
+  console.log(fileName);
+
   watcher.on('change', path => {
     console.log(path);
     if (path === fileName){
@@ -78,7 +79,7 @@ function takePic(fileName, callback){
 module.exports = takePic;
 
 if (require.main === module){
-  var fileName = 'test.jpg';
+  var fileName = 'static/test.jpg';
   takePic(fileName, () => {
     console.log('taken');
   });

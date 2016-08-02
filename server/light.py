@@ -1,6 +1,6 @@
 # just need to fill in these two function here
 import time
-
+from threading import Timer 
 from neopixel import* 
 
 
@@ -15,21 +15,23 @@ strip = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ,LED_DMA, LED_INVERT)
 strip.begin()
 
 
-def light_on():
-	"Turn on the LED strip."
-	strip.begin()
-	for i in range(strip.numPixels()):
-		strip.setPixelColor(i,Color(255,255,255))
-	strip.show()
-	print 'ON'
-
 def light_off():
-	"Turn off the LED strip."
-	strip.begin()
-	for i in range(strip.numPixels()):
-		strip.setPixelColor(i,Color(0,0,0))
-	strip.show()
-	print 'OFF'
+  "Turn off the LED strip."
+  strip.begin()
+  for i in range(strip.numPixels()):
+    strip.setPixelColor(i,Color(0,0,0))
+  strip.show()
+  print 'OFF'
+
+def light_on():
+  "Turn on the LED strip."
+  strip.begin()
+  for i in range(strip.numPixels()):
+    strip.setPixelColor(i,Color(60,60,60))
+  strip.show()
+  Timer(5, light_off, ()).start()
+  print 'ON'
+
 
 while True:
   signal = raw_input()

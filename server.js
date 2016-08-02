@@ -42,7 +42,7 @@ function spawnArd(socket){
   ard.stderr.on('data', (data)=>{console.error(data);});
   rl.on('line', (data)=>{
     io.emit('ard', data);
-    // console.log(data);
+//    console.log(JSON.parse(data).map(d => d.length).reduce((x,y) => x + y));
   });
 
   ard.on('close', ()=>{

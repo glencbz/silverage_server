@@ -10,9 +10,10 @@ from zx_sensor import ZxSensor
 
 
 # Parameters for opened and closed door state
-close = range(16,20,1)
+close = range(12,20,1)
+xclose= range(118,151,1)
 #open =  range(170,180,1)
-z_i = 154
+
 
 
 # Initialise the ZxSensor device using the default address
@@ -23,6 +24,7 @@ time.sleep(2)
 openstate=0
 prevopenstate=0
 zbuffer=[0,0,0,0,0,0,0,0]
+xbuffer=[0,0,0,0,0,0,0,0]
 
 while (True):
 	if zx_sensor.position_available():
@@ -31,21 +33,27 @@ while (True):
 
 
         	z = zx_sensor.read_z()
+		x = zx_sensor.read_x()	
 	else:
 		z=300
+		x=150
 
 	zbuffer .insert(0,z)  	
 	zbuffer.pop()
+	xbuffer.insert(0,x)
+	xbuffer.pop()
 #	print (zbuffer) 
 #	print (z)
+#	print (x)
+#	print xbuffer
 
 	if (openstate): 
  	 # opened
 	
- 		if (all(a<240 for a in zbuffer[0:3])):
-			state=1
-		else:
+ 		if (all((a>160) for a in zbuffer[:2])):
 			state=0
+		elif (all((a<160) for a in zbuffer[:2])):
+			state=1
 	
 		if (state!=prevstate):
 		#	print(z)
@@ -54,14 +62,14 @@ while (True):
 			else:
 				print("OUT")
     
-		if (all((a in close)for a in zbuffer)): 
+		if ((all((a in close)for a in zbuffer)) and (all((b in xclose)for b in xbuffer))): 
 			openstate=0  
    
    
 	else:
 	
  		 # closed
- 		if (all((a ==300) for a in zbuffer)): 
+ 		if (all((a >160) for a in zbuffer)): 
       			openstate=1
 
 	if (openstate!=prevopenstate):
@@ -71,7 +79,7 @@ while (True):
 			print("CLOSE")
 
 
-        time.sleep(.07)
+        time.sleep(.05)
 	prevstate=state
 	prevopenstate=openstate
 
