@@ -83,6 +83,9 @@ io.on('connection', (socket) => {
 
 takePic(fileName, () => {
   console.log('taken');
+  imgReg(fileName, (result)=> {
+    io.emit('img_reg', result.result);
+  });
 });
 
 server.listen(80);
