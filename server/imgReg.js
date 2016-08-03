@@ -1,6 +1,6 @@
 const fs = require('fs'),
       request = require('request'),
-      imgEndpoint = 'http://glenc.me:8080/upload';
+      imgEndpoint = 'http://glenc.me:8080/imgreg';
 
 module.exports = (filename, callback)=>{
   var req = request.post(imgEndpoint, (err, res, body) => {
