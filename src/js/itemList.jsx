@@ -1,6 +1,7 @@
 import 'bulma';
 import itemList from '../scss/itemList.scss';
 import React from 'react';
+import _ from 'lodash';
 
 const staticDir = '/static/placeholders/';
 const expiryColors = ['#ff6347', '#ffad33', '#4caf50']
@@ -15,9 +16,13 @@ class ItemRow extends React.Component {
         this.displayName = 'ItemRow';
     }
 
+    imageUrl(){
+      return 'url(img/' + this.props.image + ')';
+    }
     thumbStyles(){
     	return {
-    		backgroundImage: this.props.image
+        backgroundColor: 'gray',
+    		backgroundImage: this.imageUrl()
     	};
     }
 
@@ -49,14 +54,14 @@ class ItemInfo extends React.Component {
     }
 
     static timeDiffDays(expiryDate){
-        return milsToDays(expiryDate - new Date());
+        return _.round(ItemInfo.milsToDays(expiryDate - new Date()), 1);
     }
 
     static getExpiryColor(expiryDate){
-        var remainTime = timeDiffDays(expiryDate);
+        var remainTime = ItemInfo.timeDiffDays(expiryDate);
         if (remainTime < 2)
             return 0;
-        else if (remain < 7)
+        else if (remainTime < 7)
             return 1;
         else
             return 2;
@@ -101,8 +106,8 @@ class ItemList extends React.Component {
     	var rows = [];
     	for (var i = 0; i < this.state.objects.length; i++){
             var obj = this.state.objects[i];
-    		rows.push(<ItemRow type={obj.type}
-                                expiryDate={obj.expiryDate}
+        		rows.push(<ItemRow type={obj.type}
+                                expiryDate={new Date(obj.expiryDate)}
                                 image={obj.image}
                                 key={obj.weight + obj.position}/>);
         }

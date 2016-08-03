@@ -1,4 +1,11 @@
-var spawnSync = require('child_process').spawnSync;
+var spawnSync = require('child_process').spawnSync,
+    fs = require('fs');
+
+function writeToFile(filePath, file, callback){
+  var fstream = fs.createWriteStream(filePath);
+  file.pipe(fstream);
+  file.on('end', callback);
+}
 
 function formatOutput(outputString){
   console.log(outputString);
@@ -22,7 +29,7 @@ function formatOutput(outputString){
 function singleClassOutput(resultObj){
   var classification;
   for (var key in resultObj){
-    if (resultObj[key] > 0.7){
+    if (resultObj[key] > 0.3){
       if (classification){
         return {};
       }
@@ -40,4 +47,16 @@ function regImg(filePath){
   return singleClassOutput(formatOutput(rawResult));
 }
 
-module.exports= {regImg};
+function imgEndpoint(app){
+  var imgPath = 'tmp.jpg';
+  app.post('/imgreg', (req, res)=>{
+    req.pipe(req.busboy);
+    req.busboy.on('file', function(fieldname, file){
+      writeToFile(imgPath, file, function(){
+        var result = regImg(imgPath);
+        res.send(result);
+      });
+    });
+  })
+}
+module.exports= {regImg, imgEndpoint};

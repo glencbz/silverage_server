@@ -18,7 +18,6 @@ function writeToFile(filePath, file, callback){
 
 function retrieveExpiry(itemType){
   var d = new Date();
-
   // some meaningful number of days
   d.setDate(d.getDate() + 3);
   return d;
@@ -41,7 +40,7 @@ function formDbObject(req, callback){
       var result = regImg(imgPath).result;
       dbValues.type = result;
       dbValues.expiryDate = retrieveExpiry(result);
-      dbValues.image = imgPath;
+      dbValues.image = path.basename(imgPath);
     });
   });
 

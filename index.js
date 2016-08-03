@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 //adds the object accessing route to GET /object
 
 dbRoutes(app);
+require('./server/regImg').imgEndpoint(app);
+app.use('/img', express.static('upload_img'));
 app.use('/', express.static('dist'));
 
 app.listen(8080);

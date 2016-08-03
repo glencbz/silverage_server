@@ -5,10 +5,10 @@ module.exports = {
   context: __dirname,
   devtool: debug ? "inline-sourcemap" : null,
   entry: [
-	  "font-awesome-webpack!./node_modules/font-awesome-webpack/font-awesome.config.js",
+//	  "font-awesome-webpack!./node_modules/font-awesome-webpack/font-awesome.config.js",
 	  "./src/js/app.js",
-    'webpack-dev-server/client?http://localhost:8080',
-    'webpack/hot/only-dev-server',
+//    'webpack-dev-server/client?http://localhost:8080',
+//    'webpack/hot/only-dev-server',
   ],
   module: {
     loaders: [
